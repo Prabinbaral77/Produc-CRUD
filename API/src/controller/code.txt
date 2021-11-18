@@ -1,0 +1,46 @@
+ try{
+        if(!product.price){
+            return res.status(400).send("Please enter the price of the product")
+        }else{
+            await product.save()
+            res.status(201).send("product added sucessfully!")
+        }
+    }catch(e){
+        res.status(400).send("Invalid Operation")
+    }
+
+
+
+    //get the id of the current product
+    const query = await Product.find({}).sort({createdAt: -1})
+    const lastProductId = query[0]
+    const productId = lastProductId.PId
+
+
+       res.status(200).json(
+          product
+       )
+
+
+       const updates = Object.keys(req.body)
+    const allowedUpdates = ['itemName', 'price', 'description', 'ingredients']
+
+
+    const ProductId = parseInt(req.params.id)
+    const needToUpdateProduct = await Product.find({PId: ProductId})
+    const needToUpdateProduct1 = needToUpdateProduct[0]
+
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['itemName', 'price', 'description', 'ingredients']
+
+    const validOperation = updates.every((update) => allowedUpdates.includes(update))
+    if(!validOperation){
+        return res.status(400).send("Invalid fields")
+    }
+    try{
+        updates.forEach((updateName) =>  needToUpdateProduct1.updateName = req.body.updateName )
+        await needToUpdateProduct1.save()
+        res.status(200).send("updates successfully!")
+    }catch(e) {
+        res.status(400).send("Invalid updates")
+    }
